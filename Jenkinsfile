@@ -6,22 +6,27 @@ pipeline {
         NETLIFY_AUTH = credentials('netlify-token')
     }
 
-    stages {
+     stages {
         stage('Build') {
-            agent {
-                docker {
+            agent{
+                docker{
                     image 'node:18-alpine'
                     reuseNode true
                 }
             }
             steps {
-                echo "🔧 Checking required files..."
                 sh '''
-                    test -f index.html || (echo "❌ Missing index.html" && exit 1)
-                    echo "✅ Build check passed."
+                    echo "================Building the project================"
+                    ls -la
+                    node --version
+                    npm --version
+                    npm ci
+                    npm run build
+                    ls -la
                 '''
             }
         }
+
 
         stage('Test')   {
             agent{
@@ -33,7 +38,7 @@ pipeline {
             steps{
                 sh '''
                     echo "================Testing the project================"
-                    test -f index.html
+                    test -f build/index.html
                     npm test
                 '''
             }
@@ -57,19 +62,11 @@ pipeline {
             }
         }
 
-        stage('Post Deploy') {
-            steps {
-                echo "✅ Deployment complete! Your app is live."
-            }
-        }
-    }
 
+    }
     post {
-        success {
-            echo "🎉 CI/CD pipeline finished successfully."
-        }
-        failure {
-            echo "❌ Pipeline failed. Check logs for details."
+        always{
+            junit 'test-results/junit.xml'
         }
     }
 }
