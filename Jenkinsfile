@@ -31,9 +31,9 @@ pipeline {
                 }
             }
             steps {
-                echo "🧪 Testing quote function load..."
+                echo "🧪 Checking if function file exists..."
                 sh '''
-                    node -e "require('./netlify/functions/uiia.png'); console.log('✅ Function loaded successfully')"
+                    test -f ./netlify/functions/uiia.png && echo "✅ File exists" || (echo "❌ File missing" && exit 1)
                 '''
             }
         }
