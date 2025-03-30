@@ -40,21 +40,19 @@ pipeline {
         }
 
         stage('Deploy') {
-            agent {
-                docker {
+            agent{
+                docker{
                     image 'node:18-alpine'
                     reuseNode true
                 }
             }
             steps {
-                echo "🚀 Deploying to Netlify..."
                 sh '''
-                    npm install netlify-cli
-                    node_modules/.bin/netlify deploy \
-                      --auth=$NETLIFY_AUTH_TOKEN \
-                      --site=$NETLIFY_SITE_ID \
-                      --dir=. \
-                      --prod
+                    npm install netlify-cli --save-dev
+                    node_modules/.bin/netlify --version
+                    echo "================Deploying the project================"
+                    echo "Deploying to Netlify Site ID: $NETLIFY_SITE_ID"
+                    node_modules/.bin/netlify deploy --dir=build --prod --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH
                 '''
             }
         }
