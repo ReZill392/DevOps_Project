@@ -6,15 +6,20 @@ pipeline {
         NETLIFY_AUTH = credentials('netlify-token')
     }
 
-    stages {
-        stage('Install Dependencies') {
-            steps {
-                script {
-                    sh 'apk add --no-cache python3 py3-pip build-base'
-                    sh 'npm install netlify-cli'
-                }
+    stage('Install Dependencies') {
+        agent {
+            docker {
+                image 'node:18-alpine'
+                reuseNode true
             }
         }
+        steps {
+            sh '''
+                apk add --no-cache python3 py3-pip build-base
+                npm install netlify-cli
+            '''
+        }      
+    }
 
         stage('Build') {
             agent {
