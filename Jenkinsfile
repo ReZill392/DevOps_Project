@@ -44,7 +44,7 @@ pipeline {
                     image 'node:18-alpine'
                     reuseNode true
                 }
-        }
+            }
             steps {
                 echo "🚀 Deploying to Netlify..."
                 sh '''
@@ -54,7 +54,15 @@ pipeline {
                     --site=$NETLIFY_SITE_ID \
                     --dir=. \
                     --prod
-                    '''
+                '''
+            }
+        }
+
+        // ✅ Moving Post Deploy inside stages block
+        stage('Post Deploy') {
+            steps {
+                echo "✅ Deployment complete! Your app is live."
+            }
         }
     }
 
@@ -65,11 +73,5 @@ pipeline {
         failure {
             echo "❌ Pipeline failed. Check logs for details."
         }
-    }
-}
-
-stage('Post Deploy') {
-    steps {
-        echo "✅ Deployment complete! Your app is live."
     }
 }
