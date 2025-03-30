@@ -67,3 +67,9 @@ pipeline {
         }
     }
 }
+
+stage('Post Deploy') {
+    steps {
+        echo "✅ Deployment complete! Your app is live."
+    }
+}
