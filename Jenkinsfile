@@ -44,24 +44,17 @@ pipeline {
                     image 'node:18-alpine'
                     reuseNode true
                 }
-            }
+        }
             steps {
                 echo "🚀 Deploying to Netlify..."
                 sh '''
                     npm install netlify-cli
                     node_modules/.bin/netlify deploy \
-                      --auth=$NETLIFY_AUTH_TOKEN \
-                      --site=$NETLIFY_SITE_ID \
-                      --dir=. \
-                      --prod
-                '''
-            }
-        }
-
-        stage('Post Deploy') {
-            steps {
-                echo "✅ Deployment complete! Your app is live."
-            }
+                    --auth=$NETLIFY_AUTH \
+                    --site=$NETLIFY_SITE_ID \
+                    --dir=. \
+                    --prod
+                    '''
         }
     }
 
