@@ -2,15 +2,19 @@ body, html {
     margin: 0;
     padding: 0;
     height: 100%;
-    overflow: hidden; /* Prevent scrollbars */
-}
-
-.cat-container {
-    width: 200px;
-    height: 200px;
+    overflow: hidden; /* ป้องกัน Scrollbar */
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: black; /* พื้นหลังสีดำ */
+}
+
+/* จัดตำแหน่งแมวให้อยู่ตรงกลาง */
+.cat-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .cat {
@@ -19,46 +23,28 @@ body, html {
     animation: spin 4s infinite linear;
 }
 
-/* Keyframe สำหรับการหมุน */
-@keyframes spinX {
-    0% {
-        transform: rotateX(0deg);
-    }
-    100% {
-        transform: rotateX(360deg);
-    }
+/* แก้ไขการหมุนเป็นแกน Z */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
-/* การเคลื่อนที่ของภาพ skibidi */
+/* การเคลื่อนที่ของ skibidi */
 @keyframes moveSkibidi {
-    0% {
-        top: 0;
-        left: 0;
-    }
-    25% {
-        top: 0;
-        left: 100%;
-    }
-    50% {
-        top: 100%;
-        left: 100%;
-    }
-    75% {
-        top: 100%;
-        left: 0;
-    }
-    100% {
-        top: 0;
-        left: 0;
-    }
+    0% { top: 0; left: 0; }
+    25% { top: 0; left: 80%; }
+    50% { top: 80%; left: 80%; }
+    75% { top: 80%; left: 0; }
+    100% { top: 0; left: 0; }
 }
 
 .skibidi-container {
     position: absolute;
-    animation: moveSkibidi 10s infinite linear;
+    width: 100px;
+    animation: moveSkibidi 8s infinite linear;
 }
 
 .skibidi-toilet {
-    width: 100px; /* ปรับขนาดตามต้องการ */
+    width: 100px;
     height: auto;
 }
