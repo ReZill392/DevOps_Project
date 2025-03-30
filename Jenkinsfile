@@ -23,17 +23,18 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            agent {
-                docker {
+        stage('Test')   {
+            agent{
+                docker{
                     image 'node:18-alpine'
                     reuseNode true
                 }
             }
-            steps {
-                echo "🧪 Testing quote function load..."
+            steps{
                 sh '''
-                    node -e "require('./netlify/functions/quote.js'); console.log('✅ Function loaded successfully')"
+                    echo "================Testing the project================"
+                    test -f build/index.html
+                    npm test
                 '''
             }
         }
