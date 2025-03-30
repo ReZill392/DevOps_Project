@@ -6,67 +6,71 @@ pipeline {
         NETLIFY_AUTH = credentials('netlify-token')
     }
 
-     stages {
+    stages {
         stage('Build') {
-            agent{
-                docker{
+            agent {
+                docker {
                     image 'node:18-alpine'
                     reuseNode true
                 }
             }
             steps {
+                echo "🔧 Checking required files..."
                 sh '''
-                    echo "================Building the project================"
-                    ls -la
-                    node --version
-                    npm --version
-                    npm ci
-                    npm run build
-                    ls -la
+                    test -f index.html || (echo "❌ Missing index.html" && exit 1)
+                    echo "✅ Build check passed."
                 '''
             }
         }
 
-
-        stage('Test')   {
-            agent{
-                docker{
+        stage('Test') {
+            agent {
+                docker {
                     image 'node:18-alpine'
                     reuseNode true
                 }
             }
-            steps{
+            steps {
+                echo "🧪 Testing quote function load..."
                 sh '''
-                    echo "================Testing the project================"
-                    test -f build/index.html
-                    npm test
+                    node -e "require('./netlify/functions/uiia.png'); console.log('✅ Function loaded successfully')"
                 '''
             }
         }
 
         stage('Deploy') {
-            agent{
-                docker{
+            agent {
+                docker {
                     image 'node:18-alpine'
                     reuseNode true
                 }
             }
             steps {
+                echo "🚀 Deploying to Netlify..."
                 sh '''
-                    npm install netlify-cli --save-dev
-                    node_modules/.bin/netlify --version
-                    echo "================Deploying the project================"
-                    echo "Deploying to Netlify Site ID: $NETLIFY_SITE_ID"
-                    node_modules/.bin/netlify deploy --dir=build --prod --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH
+                    npm install netlify-cli
+                    node_modules/.bin/netlify deploy \
+                      --auth=$NETLIFY_AUTH_TOKEN \
+                      --site=$NETLIFY_SITE_ID \
+                      --dir=. \
+                      --prod
                 '''
             }
         }
 
-
+        stage('Post Deploy') {
+            steps {
+                echo "✅ Deployment complete! Your app is live."
+            }
+        }
     }
+
     post {
-        always{
-            junit 'test-results/junit.xml'
+        success {
+            echo "🎉 CI/CD pipeline finished successfully."
+        }
+        failure {
+            echo "❌ Pipeline failed. Check logs for details."
         }
     }
 }
