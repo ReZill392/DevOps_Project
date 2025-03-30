@@ -7,6 +7,15 @@ pipeline {
     }
 
     stages {
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    sh 'apk add --no-cache python3 py3-pip build-base'
+                    sh 'npm install netlify-cli'
+                }
+            }
+        }
+
         stage('Build') {
             agent {
                 docker {
