@@ -6,20 +6,21 @@ pipeline {
         NETLIFY_AUTH = credentials('netlify-token')
     }
 
-    stage('Install Dependencies') {
-        agent {
-            docker {
-                image 'node:18-alpine'
-                reuseNode true
+    stages {
+        stage('Install Dependencies') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
             }
+            steps {
+                sh '''
+                    apk add --no-cache python3 py3-pip build-base
+                    npm install netlify-cli
+                '''
+            }      
         }
-        steps {
-            sh '''
-                apk add --no-cache python3 py3-pip build-base
-                npm install netlify-cli
-            '''
-        }      
-    }
 
         stage('Build') {
             agent {
@@ -72,13 +73,12 @@ pipeline {
             }
         }
 
-        // ✅ Moving Post Deploy inside stages block
         stage('Post Deploy') {
             steps {
                 echo "✅ Deployment complete! Your app is live."
             }
         }
-    }
+    } // ✅ ปิด stages ตรงนี้
 
     post {
         success {
